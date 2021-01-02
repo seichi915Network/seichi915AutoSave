@@ -1,0 +1,35 @@
+name: Seichi915AutoSave
+version: 1.0.0
+main: net.seichi915.seichi915autosave.Seichi915AutoSave
+api-version: "1.13"
+load: POSTWORLD
+authors: [stouma915]
+description: "seichi915Network ワールド自動セーブ・バックアッププラグイン"
+website: https://www.seichi915.net
+commands:
+  save:
+    description: "指定されたワールド(または全ワールド)をセーブします。"
+    usage: /save [World(s)]
+    permission: seichi915autosave.command.save
+    permission-message: "§c権限が不足しています。"
+  backup:
+    description: "指定されたワールド(または全ワールド)をバックアップします。"
+    usage: /backup [World(s)]
+    permission: seichi915autosave.command.backup
+    permission-message: "§c権限が不足しています。"
+permissions:
+  seichi915autosave.*:
+    description: Grant all permissions of seichi915AutoSave
+    children:
+      seichi915autosave.command.*: true
+  seichi915autosave.command.*:
+    description: Grant all command permissions of seichi915AutoSave
+    children:
+      seichi915autosave.command.save: true
+      seichi915autosave.command.backup: true
+  seichi915autosave.command.save:
+    description: Permission to use /save
+    default: op
+  seichi915autosave.command.backup:
+    description: Permission to use /backup
+    default: op
