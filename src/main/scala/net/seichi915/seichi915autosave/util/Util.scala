@@ -2,7 +2,6 @@ package net.seichi915.seichi915autosave.util
 
 import java.io.{File, FileInputStream, FileOutputStream}
 import java.lang.reflect.Field
-
 import net.seichi915.seichi915autosave.Seichi915AutoSave
 import net.seichi915.seichi915autosave.configuration.Configuration
 import org.bukkit.{Bukkit, World}
@@ -10,7 +9,6 @@ import org.bukkit.{Bukkit, World}
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 object Util {
   @tailrec
@@ -27,27 +25,19 @@ object Util {
     }
   }
 
-  def saveWorld(world: World): Future[Unit] = Future {
+  def saveWorld(world: World): Unit = {
     val server = Bukkit.getServer
     val minecraftServer =
-      Util.getField(server.getClass, "console").get.get(server)
-    Util
-      .getField(minecraftServer.getClass, "autosavePeriod")
-      .get
+      getField(server.getClass, "console").get.get(server)
+    getField(minecraftServer.getClass, "autosavePeriod").get
       .set(minecraftServer, 0)
-    Seichi915AutoSave.instance.getServer.getScheduler
-      .runTask(Seichi915AutoSave.instance, (() => world.save()): Runnable)
+    world.save()
   }
 
   def backupWorlds(worlds: List[World]): Future[Unit] = Future {
     if (Configuration.isAutoSaveEnabled) worlds.foreach { world =>
-      saveWorld(world) onComplete {
-        case Success(_) =>
-        case Failure(exception) =>
-          exception.printStackTrace()
-          Seichi915AutoSave.instance.getLogger
-            .warning(s"ワールド ${world.getName} のセーブに失敗しました。")
-      }
+      Bukkit.getScheduler.runTask(Seichi915AutoSave.instance,
+                                  (() => saveWorld(world)): Runnable)
     }
     val workDirectory =
       new File(Seichi915AutoSave.backupWorkDirectory, "Worlds")

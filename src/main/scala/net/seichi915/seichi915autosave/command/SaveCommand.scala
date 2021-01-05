@@ -3,7 +3,6 @@ package net.seichi915.seichi915autosave.command
 import java.util
 import java.util.Collections
 
-import net.seichi915.seichi915autosave.Seichi915AutoSave
 import net.seichi915.seichi915autosave.configuration.Configuration
 import net.seichi915.seichi915autosave.util.Implicits._
 import net.seichi915.seichi915autosave.util.Util
@@ -11,9 +10,7 @@ import org.bukkit.{Bukkit, World}
 import org.bukkit.command.{Command, CommandExecutor, CommandSender, TabExecutor}
 import org.bukkit.util.StringUtil
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.jdk.CollectionConverters._
-import scala.util.{Failure, Success}
 
 class SaveCommand extends CommandExecutor with TabExecutor {
   override def onCommand(sender: CommandSender,
@@ -39,21 +36,11 @@ class SaveCommand extends CommandExecutor with TabExecutor {
       }
     if (Configuration.isAutoSaveMessageEnabled)
       Bukkit.broadcastMessage(Configuration.getAutoSaveStartMessage)
-    targetWorlds.foreach(world => {
-      Util.saveWorld(world) onComplete {
-        case Success(_) =>
-          if (Configuration.isAutoSaveMessageEnabled)
-            Bukkit.broadcastMessage(Configuration.getAutoSaveFinishMessage)
-          sender.sendMessage(
-            s"${targetWorlds.length}個のワールドのセーブが完了しました。".toSuccessMessage)
-        case Failure(exception) =>
-          exception.printStackTrace()
-          Seichi915AutoSave.instance.getLogger
-            .warning(s"ワールド ${world.getName} のセーブに失敗しました。")
-          sender.sendMessage(
-            s"${targetWorlds.length}個のワールドのセーブに失敗しました。".toErrorMessage)
-      }
-    })
+    targetWorlds.foreach(Util.saveWorld)
+    if (Configuration.isAutoSaveMessageEnabled)
+      Bukkit.broadcastMessage(Configuration.getAutoSaveFinishMessage)
+    sender.sendMessage(
+      s"${targetWorlds.length}個のワールドのセーブが完了しました。".toSuccessMessage)
     true
   }
 

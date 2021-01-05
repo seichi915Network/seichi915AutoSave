@@ -14,7 +14,7 @@ import java.util.zip.ZipFile
 
 import net.seichi915.seichi915autosave.command._
 import net.seichi915.seichi915autosave.configuration.Configuration
-import net.seichi915.seichi915autosave.task.{AutoBackupTask, AutoSaveTask}
+import net.seichi915.seichi915autosave.task._
 import net.seichi915.seichi915autosave.util.Util
 import org.bukkit.Bukkit
 import org.bukkit.command.{CommandExecutor, TabExecutor}
@@ -184,16 +184,8 @@ class Seichi915AutoSave extends JavaPlugin {
   }
 
   override def onDisable(): Unit = {
-    if (Configuration.isAutoSaveEnabled) {
-      val server = Bukkit.getServer
-      val minecraftServer =
-        Util.getField(server.getClass, "console").get.get(server)
-      Util
-        .getField(minecraftServer.getClass, "autosavePeriod")
-        .get
-        .set(minecraftServer, 0)
-      getServer.getWorlds.asScala.foreach(world => world.save())
-    }
+    if (Configuration.isAutoSaveEnabled)
+      getServer.getWorlds.asScala.foreach(Util.saveWorld)
     getLogger.info("クリーンアップしています...")
     Util.rmDir(Seichi915AutoSave.backupWorkDirectory)
 
