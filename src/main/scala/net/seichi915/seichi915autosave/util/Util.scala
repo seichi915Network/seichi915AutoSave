@@ -1,11 +1,15 @@
 package net.seichi915.seichi915autosave.util
 
+import cats.effect.IO
 import net.seichi915.seichi915autosave.Seichi915AutoSave
 import net.seichi915.seichi915autosave.configuration.Configuration
+import net.seichi915.seichi915autosave.util.Implicits._
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
 import org.bukkit.{Bukkit, World}
 
-import java.io.{File, FileInputStream, FileOutputStream}
+import java.io.{BufferedInputStream, File, FileInputStream, FileOutputStream}
 import java.lang.reflect.Field
+import java.util.{Calendar, TimeZone}
 import scala.annotation.tailrec
 
 object Util {
@@ -33,40 +37,69 @@ object Util {
   }
 
   def backupWorlds(worlds: List[World]): Unit = {
-    if (Configuration.isAutoSaveEnabled) worlds.foreach { world =>
-      Bukkit.getScheduler.runTask(Seichi915AutoSave.instance,
-                                  (() => saveWorld(world)): Runnable)
-    }
-    val workDirectory =
-      new File(Seichi915AutoSave.backupWorkDirectory, "Worlds")
-    workDirectory.mkdirs()
+    if (Configuration.isAutoSaveEnabled)
+      worlds.foreach { world =>
+        IO(world.save()).unsafeRunOnServerThread(Seichi915AutoSave.instance)
+      }
+    while (Configuration.getAutoBackupLocation
+             .listFiles()
+             .length >= 20) Configuration.getAutoBackupLocation
+      .listFiles()
+      .min
+      .delete()
+    val workspace =
+      new File(Seichi915AutoSave.instance.getDataFolder, "workspace")
+    if (workspace.exists()) rmDir(workspace)
+    workspace.mkdirs()
     worlds.foreach { world =>
-      val source = world.getWorldFolder
-      val target = new File(workDirectory, world.getName)
-      copyWorldDirectory(source, target)
+      copyWorldDirectory(world.getWorldFolder,
+                         new File(workspace, world.getName))
     }
-    val command =
-      s"${Seichi915AutoSave.seichi915BackupFile.getAbsolutePath} --target=. --destination=${Configuration.getAutoBackupLocation.getAbsolutePath}"
-    val runtime = Runtime.getRuntime
-    val process = runtime.exec(
-      command,
-      null,
-      workDirectory
-    )
-    process.waitFor()
-    rmDir(workDirectory)
+    val calendar = Calendar.getInstance(TimeZone.getDefault)
+    val archiveFileName =
+      s"${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-${calendar
+        .get(Calendar.DATE)}_${calendar.get(Calendar.HOUR_OF_DAY)}-${calendar
+        .get(Calendar.MINUTE)}-${calendar.get(Calendar.SECOND)}.tar.gz"
+    val archiveFile =
+      new File(Configuration.getAutoBackupLocation, archiveFileName)
+    compressDirectory(workspace, archiveFile)
+    rmDir(workspace)
   }
-
-  def isWindows: Boolean =
-    System.getProperty("os.name").toLowerCase.startsWith("windows")
 
   def rmDir(file: File): Unit = {
     if (file.isFile) file.delete()
     else {
-      val files = file.listFiles()
-      files.foreach(rmDir)
+      file.listFiles().foreach(rmDir)
       file.delete()
     }
+  }
+
+  def compressDirectory(directory: File, outputFile: File): Unit = {
+    val tarArchiveOutputStream = new TarArchiveOutputStream(
+      new FileOutputStream(outputFile))
+    def addItem(name: String, file: File): Unit = {
+      if (file.isDirectory)
+        file.listFiles().foreach { f =>
+          addItem(s"$name/${f.getName}", f)
+        } else {
+        val archiveEntry = tarArchiveOutputStream.createArchiveEntry(file, name)
+        tarArchiveOutputStream.putArchiveEntry(archiveEntry)
+        val bufferedInputStream = new BufferedInputStream(
+          new FileInputStream(file))
+        var size = 0
+        val bytes = new Array[Byte](1024)
+        while ({
+          size = bufferedInputStream.read(bytes)
+          size
+        } > 0) tarArchiveOutputStream.write(bytes, 0, size)
+        bufferedInputStream.close()
+        tarArchiveOutputStream.closeArchiveEntry()
+      }
+    }
+    directory.listFiles().foreach { file =>
+      addItem(file.getName, file)
+    }
+    tarArchiveOutputStream.close()
   }
 
   def copyWorldDirectory(source: File, target: File): Unit = {

@@ -11,7 +11,8 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "com.destroystokyo.paper" % "paper-api" % "1.14.4-R0.1-SNAPSHOT",
-  "org.typelevel" %% "cats-effect" % "2.3.1"
+  "org.typelevel" %% "cats-effect" % "2.3.1",
+  "org.apache.commons" % "commons-compress" % "1.20"
 )
 
 assemblyMergeStrategy in assembly := {

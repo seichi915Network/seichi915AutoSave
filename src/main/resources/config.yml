@@ -6,7 +6,6 @@ AutoSave:
   FinishMessage: "&7セーブが完了しました。"
 AutoBackup:
   Enable: true
-  seichi915BackupVersion: "1.0.0"
   Interval: 144000
   Location: "/mnt/Backup/"
   MessageEnable: true

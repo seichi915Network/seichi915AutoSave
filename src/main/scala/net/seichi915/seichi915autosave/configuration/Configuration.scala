@@ -30,10 +30,6 @@ object Configuration {
   def isAutoBackupEnabled: Boolean =
     Seichi915AutoSave.instance.getConfig.getBoolean("AutoBackup.Enable")
 
-  def getSeichi915BackupVersion: String =
-    Seichi915AutoSave.instance.getConfig
-      .getString("AutoBackup.seichi915BackupVersion")
-
   def getAutoBackupInterval: Int =
     Seichi915AutoSave.instance.getConfig.getInt("AutoBackup.Interval")
 

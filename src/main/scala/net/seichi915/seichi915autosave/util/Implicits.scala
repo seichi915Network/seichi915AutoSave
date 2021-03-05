@@ -1,6 +1,8 @@
 package net.seichi915.seichi915autosave.util
 
-import org.bukkit.ChatColor
+import cats.effect.IO
+import org.bukkit.{Bukkit, ChatColor}
+import org.bukkit.plugin.java.JavaPlugin
 
 object Implicits {
   implicit class StringOps(string: String) {
@@ -21,5 +23,11 @@ object Implicits {
     def isNull: Boolean = Option(any).flatMap(_ => Some(false)).getOrElse(true)
 
     def nonNull: Boolean = !isNull
+  }
+
+  implicit class IOOps(io: IO[_]) {
+    def unsafeRunOnServerThread(javaPlugin: JavaPlugin): Unit =
+      Bukkit.getScheduler
+        .runTask(javaPlugin, (() => io.unsafeRunSync()): Runnable)
   }
 }
