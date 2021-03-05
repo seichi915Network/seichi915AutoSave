@@ -1,5 +1,13 @@
 package net.seichi915.seichi915autosave
 
+import net.seichi915.seichi915autosave.command._
+import net.seichi915.seichi915autosave.configuration.Configuration
+import net.seichi915.seichi915autosave.task._
+import net.seichi915.seichi915autosave.util.Util
+import org.bukkit.Bukkit
+import org.bukkit.command.{CommandExecutor, TabExecutor}
+import org.bukkit.plugin.java.JavaPlugin
+
 import java.io.{
   BufferedInputStream,
   BufferedOutputStream,
@@ -11,15 +19,6 @@ import java.io.{
 import java.net.{HttpURLConnection, URL}
 import java.nio.file.Files
 import java.util.zip.ZipFile
-
-import net.seichi915.seichi915autosave.command._
-import net.seichi915.seichi915autosave.configuration.Configuration
-import net.seichi915.seichi915autosave.task._
-import net.seichi915.seichi915autosave.util.Util
-import org.bukkit.Bukkit
-import org.bukkit.command.{CommandExecutor, TabExecutor}
-import org.bukkit.plugin.java.JavaPlugin
-
 import scala.jdk.CollectionConverters._
 
 object Seichi915AutoSave {
