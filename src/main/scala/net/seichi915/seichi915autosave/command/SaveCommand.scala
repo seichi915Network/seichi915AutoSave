@@ -1,8 +1,5 @@
 package net.seichi915.seichi915autosave.command
 
-import java.util
-import java.util.Collections
-
 import net.seichi915.seichi915autosave.configuration.Configuration
 import net.seichi915.seichi915autosave.util.Implicits._
 import net.seichi915.seichi915autosave.util.Util
@@ -10,6 +7,8 @@ import org.bukkit.{Bukkit, World}
 import org.bukkit.command.{Command, CommandExecutor, CommandSender, TabExecutor}
 import org.bukkit.util.StringUtil
 
+import java.util
+import java.util.Collections
 import scala.jdk.CollectionConverters._
 
 class SaveCommand extends CommandExecutor with TabExecutor {

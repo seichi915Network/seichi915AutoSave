@@ -1,8 +1,6 @@
 package net.seichi915.seichi915autosave.command
 
-import java.util
-import java.util.Collections
-
+import cats.effect.IO
 import net.seichi915.seichi915autosave.Seichi915AutoSave
 import net.seichi915.seichi915autosave.configuration.Configuration
 import net.seichi915.seichi915autosave.util.Implicits._
@@ -11,9 +9,10 @@ import org.bukkit.{Bukkit, World}
 import org.bukkit.command.{Command, CommandExecutor, CommandSender, TabExecutor}
 import org.bukkit.util.StringUtil
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import java.util
+import java.util.Collections
+import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
-import scala.util.{Failure, Success}
 
 class BackupCommand extends CommandExecutor with TabExecutor {
   override def onCommand(sender: CommandSender,
@@ -39,20 +38,25 @@ class BackupCommand extends CommandExecutor with TabExecutor {
       }
     if (Configuration.isAutoBackupMessageEnabled)
       Bukkit.broadcastMessage(Configuration.getAutoBackupStartMessage)
-    Util.backupWorlds(targetWorlds) onComplete {
-      case Success(_) =>
+    val task = IO {
+      try {
+        Util.backupWorlds(targetWorlds)
         if (Configuration.isAutoBackupMessageEnabled)
           Bukkit.broadcastMessage(Configuration.getAutoBackupFinishMessage)
         sender.sendMessage(
           s"${targetWorlds.length}個のワールドのバックアップが完了しました。".toSuccessMessage)
-      case Failure(exception) =>
-        exception.printStackTrace()
-        Seichi915AutoSave.instance.getLogger
-          .warning(
-            s"ワールド ${targetWorlds.map(_.getName).mkString(", ")} のバックアップに失敗しました。")
-        sender.sendMessage(
-          s"${targetWorlds.length}個のワールドのバックアップに失敗しました。".toErrorMessage)
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          Seichi915AutoSave.instance.getLogger
+            .warning(
+              s"ワールド ${targetWorlds.map(_.getName).mkString(", ")} のバックアップに失敗しました。")
+          sender.sendMessage(
+            s"${targetWorlds.length}個のワールドのバックアップに失敗しました。".toErrorMessage)
+      }
     }
+    val contextShift = IO.contextShift(ExecutionContext.global)
+    IO.shift(contextShift).flatMap(_ => task).unsafeRunAsyncAndForget()
     true
   }
 

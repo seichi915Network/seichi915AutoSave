@@ -1,9 +1,9 @@
 package net.seichi915.seichi915autosave.configuration
 
-import java.io.File
-
 import net.seichi915.seichi915autosave.Seichi915AutoSave
 import org.bukkit.ChatColor
+
+import java.io.File
 
 object Configuration {
   def saveDefaultConfig(): Unit = Seichi915AutoSave.instance.saveDefaultConfig()

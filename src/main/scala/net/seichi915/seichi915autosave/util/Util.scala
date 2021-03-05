@@ -1,14 +1,12 @@
 package net.seichi915.seichi915autosave.util
 
-import java.io.{File, FileInputStream, FileOutputStream}
-import java.lang.reflect.Field
 import net.seichi915.seichi915autosave.Seichi915AutoSave
 import net.seichi915.seichi915autosave.configuration.Configuration
 import org.bukkit.{Bukkit, World}
 
+import java.io.{File, FileInputStream, FileOutputStream}
+import java.lang.reflect.Field
 import scala.annotation.tailrec
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object Util {
   @tailrec
@@ -34,7 +32,7 @@ object Util {
     world.save()
   }
 
-  def backupWorlds(worlds: List[World]): Future[Unit] = Future {
+  def backupWorlds(worlds: List[World]): Unit = {
     if (Configuration.isAutoSaveEnabled) worlds.foreach { world =>
       Bukkit.getScheduler.runTask(Seichi915AutoSave.instance,
                                   (() => saveWorld(world)): Runnable)
