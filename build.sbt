@@ -16,16 +16,18 @@ libraryDependencies ++= Seq(
 )
 
 assemblyMergeStrategy in assembly := {
-  case PathList("javax", "servlet", _ @ _*) => MergeStrategy.first
-  case PathList(ps @ _*) if ps.last endsWith ".properties" => MergeStrategy.first
-  case PathList(ps @ _*) if ps.last endsWith ".xml" => MergeStrategy.first
-  case PathList(ps @ _*) if ps.last endsWith ".types" => MergeStrategy.first
-  case PathList(ps @ _*) if ps.last endsWith ".class" => MergeStrategy.first
+  case PathList("javax", "servlet", _ @_*) => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith ".properties" =>
+    MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith ".xml"       => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith ".types"     => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith ".class"     => MergeStrategy.first
   case PathList(ps @ _*) if ps.last endsWith "plugin.yml" => MergeStrategy.first
   case PathList(ps @ _*) if ps.last endsWith "config.yml" => MergeStrategy.first
-  case PathList(ps @ _*) if ps.last endsWith "Syntax.java" => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "Syntax.java" =>
+    MergeStrategy.first
   case "application.conf" => MergeStrategy.concat
-  case "unwanted.txt" => MergeStrategy.discard
+  case "unwanted.txt"     => MergeStrategy.discard
   case x =>
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
