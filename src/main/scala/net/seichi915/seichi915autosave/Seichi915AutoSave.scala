@@ -4,7 +4,7 @@ import net.seichi915.seichi915autosave.command._
 import net.seichi915.seichi915autosave.configuration.Configuration
 import net.seichi915.seichi915autosave.task._
 import net.seichi915.seichi915autosave.util.Util
-import org.bukkit.command.{CommandExecutor, TabExecutor}
+import org.bukkit.command.CommandExecutor
 import org.bukkit.plugin.java.JavaPlugin
 
 import scala.jdk.CollectionConverters._
@@ -18,17 +18,23 @@ class Seichi915AutoSave extends JavaPlugin {
 
   override def onEnable(): Unit = {
     Configuration.saveDefaultConfig()
-    if (Configuration.isAutoBackupEnabled && !Configuration.getAutoBackupLocation
-          .exists())
+    if (
+      Configuration.isAutoBackupEnabled && !Configuration.getAutoBackupLocation
+        .exists()
+    )
       Configuration.getAutoBackupLocation.mkdirs()
     if (Configuration.isAutoSaveEnabled)
-      new AutoSaveTask().runTaskTimer(this,
-                                      Configuration.getAutoSaveInterval,
-                                      Configuration.getAutoSaveInterval)
+      new AutoSaveTask().runTaskTimer(
+        this,
+        Configuration.getAutoSaveInterval,
+        Configuration.getAutoSaveInterval
+      )
     if (Configuration.isAutoBackupEnabled)
-      new AutoBackupTask().runTaskTimer(this,
-                                        Configuration.getAutoBackupInterval,
-                                        Configuration.getAutoBackupInterval)
+      new AutoBackupTask().runTaskTimer(
+        this,
+        Configuration.getAutoBackupInterval,
+        Configuration.getAutoBackupInterval
+      )
     Map(
       "save" -> new SaveCommand,
       "backup" -> new BackupCommand
@@ -37,7 +43,7 @@ class Seichi915AutoSave extends JavaPlugin {
         getServer.getPluginCommand(commandName).setExecutor(commandExecutor)
         getServer
           .getPluginCommand(commandName)
-          .setTabCompleter(commandExecutor.asInstanceOf[TabExecutor])
+          .setTabCompleter(commandExecutor)
     }
 
     getLogger.info("seichi915AutoSaveが有効になりました。")

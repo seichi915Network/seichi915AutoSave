@@ -20,12 +20,14 @@ object Configuration {
   def getAutoSaveStartMessage: String =
     ChatColor.translateAlternateColorCodes(
       '&',
-      Seichi915AutoSave.instance.getConfig.getString("AutoSave.StartMessage"))
+      Seichi915AutoSave.instance.getConfig.getString("AutoSave.StartMessage")
+    )
 
   def getAutoSaveFinishMessage: String =
     ChatColor.translateAlternateColorCodes(
       '&',
-      Seichi915AutoSave.instance.getConfig.getString("AutoSave.FinishMessage"))
+      Seichi915AutoSave.instance.getConfig.getString("AutoSave.FinishMessage")
+    )
 
   def isAutoBackupEnabled: Boolean =
     Seichi915AutoSave.instance.getConfig.getBoolean("AutoBackup.Enable")
@@ -35,7 +37,8 @@ object Configuration {
 
   def getAutoBackupLocation: File =
     new File(
-      Seichi915AutoSave.instance.getConfig.getString("AutoBackup.Location"))
+      Seichi915AutoSave.instance.getConfig.getString("AutoBackup.Location")
+    )
 
   def isAutoBackupMessageEnabled: Boolean =
     Seichi915AutoSave.instance.getConfig.getBoolean("AutoBackup.MessageEnable")
@@ -43,11 +46,13 @@ object Configuration {
   def getAutoBackupStartMessage: String =
     ChatColor.translateAlternateColorCodes(
       '&',
-      Seichi915AutoSave.instance.getConfig.getString("AutoBackup.StartMessage"))
+      Seichi915AutoSave.instance.getConfig.getString("AutoBackup.StartMessage")
+    )
 
   def getAutoBackupFinishMessage: String =
     ChatColor.translateAlternateColorCodes(
       '&',
       Seichi915AutoSave.instance.getConfig
-        .getString("AutoBackup.FinishMessage"))
+        .getString("AutoBackup.FinishMessage")
+    )
 }

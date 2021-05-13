@@ -41,19 +41,24 @@ object Util {
       worlds.foreach { world =>
         IO(world.save()).unsafeRunOnServerThread(Seichi915AutoSave.instance)
       }
-    while (Configuration.getAutoBackupLocation
-             .listFiles()
-             .length >= 20) Configuration.getAutoBackupLocation
-      .listFiles()
-      .min
-      .delete()
+    while (
+      Configuration.getAutoBackupLocation
+        .listFiles()
+        .length >= 20
+    )
+      Configuration.getAutoBackupLocation
+        .listFiles()
+        .min
+        .delete()
     val workspace =
       new File(Seichi915AutoSave.instance.getDataFolder, "workspace")
     if (workspace.exists()) rmDir(workspace)
     workspace.mkdirs()
     worlds.foreach { world =>
-      copyWorldDirectory(world.getWorldFolder,
-                         new File(workspace, world.getName))
+      copyWorldDirectory(
+        world.getWorldFolder,
+        new File(workspace, world.getName)
+      )
     }
     val calendar = Calendar.getInstance(TimeZone.getDefault)
     val archiveFileName =
@@ -76,16 +81,19 @@ object Util {
 
   def compressDirectory(directory: File, outputFile: File): Unit = {
     val tarArchiveOutputStream = new TarArchiveOutputStream(
-      new FileOutputStream(outputFile))
+      new FileOutputStream(outputFile)
+    )
     def addItem(name: String, file: File): Unit = {
       if (file.isDirectory)
         file.listFiles().foreach { f =>
           addItem(s"$name/${f.getName}", f)
-        } else {
+        }
+      else {
         val archiveEntry = tarArchiveOutputStream.createArchiveEntry(file, name)
         tarArchiveOutputStream.putArchiveEntry(archiveEntry)
         val bufferedInputStream = new BufferedInputStream(
-          new FileInputStream(file))
+          new FileInputStream(file)
+        )
         var size = 0
         val bytes = new Array[Byte](1024)
         while ({

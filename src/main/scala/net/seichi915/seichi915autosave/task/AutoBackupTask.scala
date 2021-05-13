@@ -24,7 +24,8 @@ class AutoBackupTask extends BukkitRunnable {
           e.printStackTrace()
           Seichi915AutoSave.instance.getLogger
             .warning(
-              s"ワールド ${Bukkit.getServer.getWorlds.asScala.toList.map(_.getName).mkString(", ")} のバックアップに失敗しました。")
+              s"ワールド ${Bukkit.getServer.getWorlds.asScala.toList.map(_.getName).mkString(", ")} のバックアップに失敗しました。"
+            )
       }
     }
     val contextShift = IO.contextShift(ExecutionContext.global)

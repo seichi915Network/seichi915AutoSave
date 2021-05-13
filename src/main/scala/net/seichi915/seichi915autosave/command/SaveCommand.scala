@@ -12,10 +12,12 @@ import java.util.Collections
 import scala.jdk.CollectionConverters._
 
 class SaveCommand extends CommandExecutor with TabExecutor {
-  override def onCommand(sender: CommandSender,
-                         command: Command,
-                         label: String,
-                         args: Array[String]): Boolean = {
+  override def onCommand(
+      sender: CommandSender,
+      command: Command,
+      label: String,
+      args: Array[String]
+  ): Boolean = {
     var targetWorlds = List[World]()
     if (args.isEmpty)
       targetWorlds =
@@ -39,20 +41,24 @@ class SaveCommand extends CommandExecutor with TabExecutor {
     if (Configuration.isAutoSaveMessageEnabled)
       Bukkit.broadcastMessage(Configuration.getAutoSaveFinishMessage)
     sender.sendMessage(
-      s"${targetWorlds.length}個のワールドのセーブが完了しました。".toSuccessMessage)
+      s"${targetWorlds.length}個のワールドのセーブが完了しました。".toSuccessMessage
+    )
     true
   }
 
-  override def onTabComplete(sender: CommandSender,
-                             command: Command,
-                             alias: String,
-                             args: Array[String]): util.List[String] = {
+  override def onTabComplete(
+      sender: CommandSender,
+      command: Command,
+      alias: String,
+      args: Array[String]
+  ): util.List[String] = {
     val completions = new util.ArrayList[String]()
     import scala.jdk.CollectionConverters._
     StringUtil.copyPartialMatches(
       args.last,
       Bukkit.getWorlds.asScala.map(_.getName).asJava,
-      completions)
+      completions
+    )
     Collections.sort(completions)
     completions
   }
