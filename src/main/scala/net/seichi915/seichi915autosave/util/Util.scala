@@ -72,11 +72,9 @@ object Util {
   }
 
   def rmDir(file: File): Unit = {
-    if (file.isFile) file.delete()
-    else {
+    if (file.isDirectory)
       file.listFiles().foreach(rmDir)
-      file.delete()
-    }
+    file.delete()
   }
 
   def compressDirectory(directory: File, outputFile: File): Unit = {
