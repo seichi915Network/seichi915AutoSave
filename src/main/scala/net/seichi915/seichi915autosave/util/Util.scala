@@ -44,7 +44,7 @@ object Util {
     while (
       Configuration.getAutoBackupLocation
         .listFiles()
-        .length >= 20
+        .length >= 50
     )
       Configuration.getAutoBackupLocation
         .listFiles()
