@@ -1,5 +1,5 @@
 name: Seichi915AutoSave
-version: 1.0.3
+version: 1.0.4
 main: net.seichi915.seichi915autosave.Seichi915AutoSave
 api-version: "1.13"
 load: POSTWORLD
